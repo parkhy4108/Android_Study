@@ -1,4 +1,4 @@
-#HashMap과 ArrayMap , SparseMap의 차이는 무엇인가요??
+# HashMap과 ArrayMap , SparseMap의 차이는 무엇인가요??
 > 안드로이드에서 메모리는 굉장히 중요합니다.
   hashmap은 해쉬 반환 함수로 인해 메모리 낭비가 클 가능성이 높고, 이를 줄이기 위해 Arraymap을 사용할 수 있습니다.
   Arraymap은 데이터의 생성,삭제 시 배열의 크기가 조절되게 구현해 메모리를 줄일 수 있지만 오버헤드의 발생이 생길수 있습니다. 
