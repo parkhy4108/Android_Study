@@ -24,4 +24,6 @@
 + 메모리 안에 머물고 있음.
 + 다시 시작되면 onRestart() 호출
 + 종료하면 onDestroy 호출
-+ 
+## [ 6 ] onDestroy()
++ Activity가 소멸될때 불어오는 콜백
++ 생명주기 
