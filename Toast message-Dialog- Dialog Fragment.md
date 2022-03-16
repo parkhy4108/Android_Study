@@ -4,10 +4,11 @@
 -> setgravity
 -> setview -> 토스트뷰를 만들어서 커스텀할때
 
-## < Dialog > 
+## < Dialog >  = Deprecated -> AlertDialog 
 = 알림 / 경고 용도로 자주 사용하는 팝업창
+= 여러가지 대화 상자 디자인 빌드 가능
 
-1. AlertDialog.Builder 객체 생서어
+1. AlertDialog.Builder 객체 생성 ( 제목, 콘텐츠영역, 작업버튼 )
 2. button add  -> Positive
                -> Negative
 3. 리스트 추가 ( 단일 선택 )
