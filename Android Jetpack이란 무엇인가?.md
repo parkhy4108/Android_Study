@@ -4,7 +4,7 @@
 
 ## Jetpack 구성요소
 1. Architecture
-  + DataBinding : xml 파일에 Data를 연결해서 사용할 수 있게 해줌 -> findbyid 할 필요없음
+  + DataBinding : xml 파일에 Data를 연결해서 사용할 수 있게 해줌 -> findViewById 할 필요없음
   + LifeCycle :  Android Activity 생명주기 관련 유틸리티
   + LiveData : 데이터가 변경될 때 실시간으로 view에 알려줌
   + Navigation : Activity , Fragment 간 이동을 쉽게 도와준다
