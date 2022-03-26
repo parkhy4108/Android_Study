@@ -1,10 +1,10 @@
-### Room
-#### OverView (개요)
+## Room
+### OverView (개요)
     1. 설정
     2. 기본 구성요소
     3. 샘플 구현
-
-1. 설정
+* * *
+#### 1. 설정
 ```kotlin
 //Groovy
 dependencies {
@@ -14,8 +14,8 @@ dependencies {
     annotationProcessor "androidx.room:room-compiler:$room_version"
 }
 ```
-
-2. 기본 구성 요소 Primary components
+* * *
+#### 2. 기본 구성 요소 Primary components
 
           + The database class that holds the database and serves as the main access point 
             for the underlying connection to your app's persisted data.
@@ -26,7 +26,9 @@ dependencies {
             to query, update, insert, and delete data in the database.
             = 데이터 엑세스 오브젝트 ( DAO ) : 앱에서 데이터베이스의 데이터를 quiry, update, insert, delete
             할 수 있게 해주는 메서드를 제공한다. = DB 조작 메서드 제공자
-3. 샘플 구현
+           
+* * *
+#### 3. 샘플 구현
 
 3.1 ) Data entity
 
@@ -67,7 +69,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao() : UserDao
 }
 ```
-
+* * *
 ### Define data using entities
 #### Anatomy of an entity
   -You define each Room entity as a class that is annotated with @Entity
@@ -111,3 +113,97 @@ data class RemoteUser(
 ) : User()
 ``` 
 @Entity(ignoredColumns = ["picture"]) 이렇게 사용한다.
+
+* * *
+## Accessing data using Room DAOs
+### Anatomy of a DAO
+```kotlin 
+@Dao
+interface UserDao {
+    @Insert
+    fun insertAll(vararg users: User)
+
+    @Delete
+    fun delete(user: User)
+
+    @Query("SELECT * FROM user")
+    fun getAll(): List<User>
+}
+```
+
+### Convenience methods
+- insert
+```kotlin
+@Dao
+interface UserDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertUsers(vararg users: User)
+
+    @Insert
+    fun insertBothUsers(user1: User, user2: User)
+
+    @Insert
+    fun insertUsersAndFriends(user: User, friends: List<User>)
+}
+```
+- Update
+```kotlin
+@Dao
+interface UserDao {
+    @Update
+    fun updateUsers(vararg users: User)
+}
+```
+- Query
+ + SELECT 쿼리를 사용하여 데이터베이스의 User 객체를 모두 반환하는 메서드를 정의합니다. 
+```kotlin
+@Query("SELECT * FROM user")
+fun loadAllUsers(): Array<User>
+```
+
+ + 테이블 column 의 하위 컬럼 반환하는 방법 
+```kotlin 
+data class NameTuple(
+    @ColumnInfo(name = "first_name") val firstName: String?,
+    @ColumnInfo(name = "last_name") val lastName: String?
+)
+```
+
+그 다음에
+```kotlin 
+@Query( "SELECT first_name, last_name FROM user" )
+fun loadFullName() : List<NameTuple> 
+```
+이렇게 하면 first_name 하고 last_name 컬럼의 값을 반환하고 NameTuple 클래스 필드에 매핑 될 수 있다고 한다.
+
+ + 쿼리에 매개변수 전달하는 방법
+
+```kotlin
+@Query( "SELECT * FROM user WHERE age > :minAge" )
+fun loadAllUsersOlderThan(minAge: Int): Array<User>
+```
+
+이렇게도 가능하다고 한다.
+```kotlin
+@Query("SELECT * FROM user WHERE age BETWEEN :minAge AND :maxAge")
+fun loadAllUsersBetweenAges(minAge: Int, maxAge: Int): Array<User>
+
+@Query("SELECT * FROM user WHERE first_name LIKE :search " +
+       "OR last_name LIKE :search")
+fun findUserWithName(search: String): List<User>
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
