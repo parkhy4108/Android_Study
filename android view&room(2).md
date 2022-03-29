@@ -59,5 +59,21 @@ Room executes all queries on a separate thread.
 이게 뭔 개소리야??
 Flow를 왜 쓰는데 그래서... 좀 더 찾아보고 다시 와서 적자.
 ```
+
+### 4. Companion object = 
+```kotlin 
+아주 간략히 
+object = 싱글턴 선언 방법, 시스템 전체에 하나 메모리에 올려둔다.
+companion object = 클래스가 생성될 때 함께 생성되는 객체
+클래스.companion 으로 접근할 수 있다.
+상속받으면 companion도 접근할 수 있고 자식에서 companion object를 만들면
+만든 이름을 접근하여 사용할 수 있다. 객체이기 때문에 변수로 만들수도 있고 companion 이름을 별도로 만들수있다. 인터페이스도 가능하다. 
+만약 자식 companion 이 childecompanion 이라고 하고 자식.childcompanion 
+하면 자식꺼로 가고 자식.Companion ( 부모 Companion 은 별칭이 없을 때) 하면 
+부모 companion 으로 간다.
+```
+
+###  
+
      
 
