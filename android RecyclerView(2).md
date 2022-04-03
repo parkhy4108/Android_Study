@@ -60,9 +60,24 @@
   ##### 1) onCreateViewHolder( ) : ViewHolder { return ViewHolder() }
       onCreateViewHolder를 살펴보자.
       onCreateViewHolder 의 원형을 보면 
+      
       @NonNull
       public abstract VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType);
       
+      android develop 을 보면
+      
+      // Create new views (invoked by the layout manager)
+    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
+        // Create a new view, which defines the UI of the list item
+        val view = LayoutInflater.from(viewGroup.context)
+                .inflate(R.layout.text_row_item, viewGroup, false)
+
+        return ViewHolder(view)
+    }
+    
+    이렇게 되어있다. 
+    
+    설명처럼 onCreateViewHolder() 에서 view를 만들고 
   ##### 2) onBindViewHolder( ) { }
   ##### 3) ViewHolder( ) : RecyclerView.ViewHolder() { }
   
