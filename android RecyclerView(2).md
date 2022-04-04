@@ -45,29 +45,43 @@
     view의 재활용 이것을 위해 viewholder가 존재한다.
     데이터만 계속 갈아주면 화면에 보일 10개만 가지고 view를 담고있는 그릇을 재활용하면 된다.
     
-#### 3.1 Adpater
+#### 3.1 Adpater : ListAdapter<>() , RecyclerView.Adapter<>()
      adapter 를 만들때는 필수적으로 만들어야하는 메서드가 있다.
-     1) onCreateViewHolder ( new viewHolder 만들어서 반환 )
+     1) viewHolder ( item.xml 과 viewHolder 연결 )
+        : viewHolder 는 item.xml 에 만든 view 들과 연결하여 하나의 item이 담긴 그릇을 만들어준다.
+        
+     2) onCreateViewHolder ( new viewHolder 만들어서 반환 )
         : ViewHolder 를 새로 만들어야 할 때마다 이 메서드를 호출한다.
           ViewHolder 와 연결된 View 를 생성하고 초기화 하지만 뷰의 내용을
           채우진 않는다. ViewHolder가 바인딩된 상태가 아니다.
-     2) onBindViewHolder ( 새로만든 viewHolder 에 데이터 연결 )
+     3) onBindViewHolder ( 새로만든 viewHolder 에 데이터 연결 )
         : RecyclerView 가 ViewHolder 를 데이터와 연결할 때 이 메서드를 호출한다.
           데이터를 가져와 뷰홀더를 
-     3) viewHolder ( item.xml 과 viewHolder 연결 )
-        : viewHolder 는 item.xml 에 만든 view 들과 연결하여 하나의 item이 담긴 그릇을 만들어준다.
+     
+  
+  ##### 1) ViewHolder( ) : RecyclerView.ViewHolder() { }
+     여기서 item을 담을 ViewHolder 를 만든다.
+     binding 을 이용해 만들면 매개변수로 binding을 받거나 아니면 view: View 를 받아서 사용하면 된다.
+     class ViewHolder(var binding: ItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(data: Data){
+            binding.(something in xml id).text = data.(*something)
+        }
+    }
+    이렇게 바인딩하고 바인딩 하는 item 의 세부항목들 view 와 data를 fun bind의 매개변수로 받아서 묶어준다.
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val textView: TextView
+
+        init {
+            // Define click listener for the ViewHolder's View.
+            textView = view.findViewById(R.id.textView)
+        }
+    }
+    그냥 view 로 쓰면 이렇게 findViewByID 를 사용하여 쓰면 된다.     
        
-  ##### 1) onCreateViewHolder( ) : ViewHolder { return ViewHolder() }
-      onCreateViewHolder를 살펴보자.
-      onCreateViewHolder 의 원형을 보면 
+       
+  ##### 2) onCreateViewHolder( ) : ViewHolder {}
       
-      @NonNull
-      public abstract VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType);
-      
-      android develop 을 보면
-      
-      // Create new views (invoked by the layout manager)
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
+      override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
         val view = LayoutInflater.from(viewGroup.context)
                 .inflate(R.layout.text_row_item, viewGroup, false)
@@ -75,24 +89,62 @@
         return ViewHolder(view)
     }
     
-    이렇게 되어있다. 
+    만들어둔 ViewHolder 를 상속받고 view 를 Layout 에 Inflate 해준다.
+    viewholder 를 여기서 Recyclerview 에 붙여준다.
+    binding 을 사용했으면 
+      
+     val viewHolder = BusStopViewHolder(BusStopItemBinding.inflate(LayoutInflater.from(parent.context), parent,false))
+    return viewHolder   
+      
+  ##### 2) onBindViewHolder( ) {  }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(getItem(position))
+    }
     
-    설명처럼 onCreateViewHolder() 에서 view를 만들고 
-  ##### 2) onBindViewHolder( ) { }
-  ##### 3) ViewHolder( ) : RecyclerView.ViewHolder() { }
-  
+    여기서 item 의 getItem(position) 
+    
+    protected T getItem(int position) {
+        return mDiffer.getCurrentList().get(position);
+    }
+    
+    mDiffer 를 찾아보면 final AsyncListDiffer<T> mDiffer 를 찾을 수 있다.
+    
+     public abstract class ListAdapter<T, VH extends RecyclerView.ViewHolder>
+        extends RecyclerView.Adapter<VH> {
+    final AsyncListDiffer<T> mDiffer;
+    ...
+    
+    그래서 앞에 AsyncListDiffer 를 가보면
+    
+    여기로 오게된다. 
+    
+    public class AsyncListDiffer<T> {
+    private final ListUpdateCallback mUpdateCallback;
+    @SuppressWarnings("WeakerAccess") /* synthetic access */
+    final AsyncDifferConfig<T> mConfig;
+    Executor mMainThreadExecutor;
+    private static class MainThreadExecutor implements Executor {
+        final Handler mHandler = new Handler(Looper.getMainLooper());
+        MainThreadExecutor() {}
+        @Override
+        public void execute(@NonNull Runnable command) {
+            mHandler.post(command);
+        }
+    }
+    ...
+    
+    여기 안에 
+    
+    private List<T> mReadOnlyList = Collections.emptyList();
     
     
+     @NonNull
+    public List<T> getCurrentList() {
+        return mReadOnlyList;
+    }
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    holder.bind(getItem(position))
+    => viewholder -> bind -> getItem(position) ->  mDiffer.getCurrentList().get(position)
+    -> viewholder.bind(mDiffer. Collection.emptyList(). get(position) )
     
